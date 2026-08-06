@@ -12,8 +12,17 @@ from langchain_core.runnables import RunnableParallel, RunnablePassthrough, Runn
 from langchain_core.output_parsers import StrOutputParser
 
 # Config
-load_dotenv()
-os.environ["GROQ_API_KEY"] = os.getenv("GROQ_API_KEY")
+
+load_dotenv()  # for local dev
+
+# Prefer Streamlit secrets (used on Streamlit Cloud); fall back to .env locally
+groq_api_key = st.secrets.get("GROQ_API_KEY", os.getenv("GROQ_API_KEY"))
+
+if not groq_api_key:
+    st.error("⚠️ GROQ_API_KEY not found. Add it in Streamlit Cloud → Settings → Secrets.")
+    st.stop()
+
+os.environ["GROQ_API_KEY"] = groq_api_key
 st.set_page_config(page_title="📺 YouTube Analyzer Pro", layout="wide")
 
 
