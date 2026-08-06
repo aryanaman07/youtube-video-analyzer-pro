@@ -11,9 +11,6 @@ from langchain_core.prompts import PromptTemplate
 from langchain_core.runnables import RunnableParallel, RunnablePassthrough, RunnableLambda
 from langchain_core.output_parsers import StrOutputParser
 
-from youtube_transcript_api.proxies import WebshareProxyConfig
-
-
 # Config
 
 load_dotenv()  # for local dev
@@ -65,34 +62,17 @@ def extract_video_id(url):
 @st.cache_data(ttl=3600)
 def get_transcript(video_id):
     try:
-        api = YouTubeTranscriptApi(
-            proxy_config=WebshareProxyConfig(
-                proxy_username=st.secrets["WEBSHARE_USERNAME"],
-                proxy_password=st.secrets["WEBSHARE_PASSWORD"],
-            )
-        )
+        api = YouTubeTranscriptApi()
         transcript_list = api.list(video_id)
-
-        # Try preferred languages first
         for lang in ['hi', 'en']:
             try:
                 transcript_obj = transcript_list.find_generated_transcript([lang])
                 data = transcript_obj.fetch()
                 return [{"text": chunk.text, "start": chunk.start, "duration": chunk.duration} for chunk in data], lang
-            except Exception:
-                continue
-
-        # Fallback: grab whatever transcript is available
-        # TranscriptList is iterable but NOT subscriptable — convert to list first
-        available_transcripts = list(transcript_list)
-        if not available_transcripts:
-            st.error("⚠️ No transcripts available!")
-            return None, None
-
-        first_transcript = available_transcripts[0]
-        data = first_transcript.fetch()
-        return [{"text": chunk.text, "start": chunk.start, "duration": chunk.duration} for chunk in data], first_transcript.language_code
-
+            except: continue
+        transcript_obj = transcript_list.find_generated_transcript([transcript_list[0].language_code])
+        data = transcript_obj.fetch()
+        return [{"text": chunk.text, "start": chunk.start, "duration": chunk.duration} for chunk in data], transcript_list[0].language_code
     except TranscriptsDisabled:
         st.error("⚠️ No transcripts available!")
         return None, None
