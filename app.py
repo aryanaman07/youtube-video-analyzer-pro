@@ -11,6 +11,9 @@ from langchain_core.prompts import PromptTemplate
 from langchain_core.runnables import RunnableParallel, RunnablePassthrough, RunnableLambda
 from langchain_core.output_parsers import StrOutputParser
 
+from youtube_transcript_api.proxies import WebshareProxyConfig
+
+
 # Config
 
 load_dotenv()  # for local dev
@@ -62,7 +65,12 @@ def extract_video_id(url):
 @st.cache_data(ttl=3600)
 def get_transcript(video_id):
     try:
-        api = YouTubeTranscriptApi()
+        api = YouTubeTranscriptApi(
+            proxy_config=WebshareProxyConfig(
+                proxy_username=st.secrets["WEBSHARE_USERNAME"],
+                proxy_password=st.secrets["WEBSHARE_PASSWORD"],
+            )
+        )
         transcript_list = api.list(video_id)
         for lang in ['hi', 'en']:
             try:
