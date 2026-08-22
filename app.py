@@ -276,4 +276,4 @@ else:
         """)
 
 st.markdown("---")
-st.markdown("<p style='text-align: center; color: #666; font-size: 0.9rem; padding: 1rem;'>Built with ❤️ using Streamlit + LangChain + Grok</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: #666; font-size: 0.9rem; padding: 1rem;'>Built with ❤️ using Streamlit + LangChain + Groq</p>", unsafe_allow_html=True)
