@@ -205,7 +205,7 @@ if st.session_state.retriever:
                 st.markdown("**🔬 Generate comprehensive video analysis**")
             with st.chat_message("assistant"):
                 with st.spinner("🔬 Professional analysis..."):
-                    llm = ChatGroq(model="llama-3.1-8b-instant", temperature=0.0)
+                    llm = ChatGroq(model="openai/gpt-oss-20b", temperature=0.0)
                     
                     context = format_docs(st.session_state.retriever.invoke("summarize this video"))
                     prompt_text = FULL_SUMMARY_PROMPT.format(context=context)
@@ -218,7 +218,7 @@ if st.session_state.retriever:
                 st.markdown("**📋 Extract structured topics**")
             with st.chat_message("assistant"):
                 with st.spinner("🔍 Topic extraction..."):
-                    llm = ChatGroq(model="llama-3.1-8b-instant", temperature=0.0)
+                    llm = ChatGroq(model="openai/gpt-oss-20b", temperature=0.0)
                     
                     context = format_docs(st.session_state.retriever.invoke("main topics"))
                     prompt_text = KEY_TOPICS_PROMPT.format(context=context)
@@ -245,7 +245,7 @@ if st.session_state.retriever:
         
         with st.chat_message("assistant"):
             with st.spinner("🤖 AI Analysis..."):
-                llm = ChatGroq(model="llama-3.1-8b-instant", temperature=0.0)
+                llm = ChatGroq(model="openai/gpt-oss-20b", temperature=0.0)
                 
                 context = format_docs(st.session_state.retriever.invoke(question))
                 
